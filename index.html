@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voomp - Gerenciador de Novidades</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f0f1a;
+      color: #fff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 30px;
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .header h1 span {
+      font-size: 28px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+      color: #fff;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(167, 139, 250, 0.4);
+    }
+    
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.15);
+    }
+    
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.3);
+    }
+    
+    .btn-success {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    
+    .btn-success:hover {
+      background: rgba(34, 197, 94, 0.3);
+    }
+    
+    /* Cards */
+    .card {
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+    }
+    
+    /* Form */
+    .form-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+    
+    .form-group {
+      flex: 1;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 6px;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #a78bfa;
+    }
+    
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #a78bfa;
+      cursor: pointer;
+    }
+    
+    .checkbox-group label {
+      margin: 0;
+      cursor: pointer;
+    }
+    
+    /* Steps List */
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    
+    .step-item:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.15);
+    }
+    
+    .step-item.dragging {
+      opacity: 0.5;
+      border-color: #a78bfa;
+    }
+    
+    .step-drag {
+      cursor: grab;
+      color: rgba(255,255,255,0.3);
+      font-size: 18px;
+      padding: 4px;
+    }
+    
+    .step-drag:active {
+      cursor: grabbing;
+    }
+    
+    .step-number {
+      background: #a78bfa;
+      color: #1a1a2e;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    
+    .step-info {
+      flex: 1;
+    }
+    
+    .step-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    
+    .step-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+    }
+    
+    .step-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .step-actions .btn {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: rgba(255,255,255,0.5);
+    }
+    
+    .empty-state p {
+      margin-bottom: 16px;
+    }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal {
+      background: #1a1a2e;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform 0.3s;
+    }
+    
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+    
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .modal-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .modal-close {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    
+    .modal-close:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    
+    .modal-body {
+      padding: 24px;
+    }
+    
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 20px 24px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    /* How To Steps */
+    .howto-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .howto-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .howto-item span {
+      background: #a78bfa;
+      color: #1a1a2e;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    
+    .howto-item input {
+      flex: 1;
+    }
+    
+    .howto-item .btn {
+      padding: 6px 10px;
+      font-size: 14px;
+    }
+    
+    .add-howto {
+      margin-top: 10px;
+    }
+    
+    /* JSON Output */
+    .json-output {
+      background: #0d0d15;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 12px;
+      color: #22c55e;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .copy-feedback {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #22c55e;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    
+    .copy-feedback.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    /* Preview Modal */
+    .preview-container {
+      background: #252542;
+      border-radius: 12px;
+      padding: 20px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+      }
+      
+      .header {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+      
+      .step-item {
+        flex-wrap: wrap;
+      }
+      
+      .step-actions {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1><span>🎉</span> Voomp - Gerenciador de Novidades</h1>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-secondary" onclick="openPreview()">👁️ Preview</button>
+        <button class="btn btn-primary" onclick="openJsonModal()">📋 Gerar JSON</button>
+      </div>
+    </div>
+    
+    <!-- Configurações Gerais -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">⚙️ Configurações Gerais</span>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Modal ID</label>
+          <input type="text" id="modalId" value="novidades-2025-v2" placeholder="novidades-2025-v2">
+        </div>
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <div class="checkbox-group">
+            <input type="checkbox" id="modalAtivo" checked>
+            <label for="modalAtivo">Modal Ativo</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Steps -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📝 Steps (<span id="stepsCount">0</span>)</span>
+        <button class="btn btn-primary" onclick="openStepModal()">+ Adicionar</button>
+      </div>
+      <div class="steps-list" id="stepsList">
+        <div class="empty-state">
+          <p>Nenhum step adicionado ainda.</p>
+          <button class="btn btn-primary" onclick="openStepModal()">+ Adicionar primeiro step</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal Editar/Adicionar Step -->
+  <div class="modal-overlay" id="stepModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="stepModalTitle">Adicionar Step</h2>
+        <button class="modal-close" onclick="closeStepModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editingStepIndex" value="-1">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tag</label>
+            <input type="text" id="stepTag" value="NOVO" placeholder="NOVO">
+          </div>
+          <div class="form-group">
+            <label>Cor da Tag</label>
+            <input type="color" id="stepTagColor" value="#22c55e" style="height: 42px; padding: 4px;">
+          </div>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Título</label>
+          <input type="text" id="stepTitle" placeholder="Ex: Pagamento em 2 cartões">
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Descrição</label>
+          <textarea id="stepDescription" placeholder="Descreva a novidade..."></textarea>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>URL da Imagem</label>
+          <input type="text" id="stepImage" placeholder="https://raw.githubusercontent.com/...">
+        </div>
+        
+        <div class="form-group">
+          <label>Como ativar:</label>
+          <div class="howto-list" id="howtoList">
+            <!-- Itens dinâmicos -->
+          </div>
+          <button class="btn btn-secondary add-howto" onclick="addHowtoStep()">+ Adicionar passo</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeStepModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveStep()">Salvar</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal JSON -->
+  <div class="modal-overlay" id="jsonModal">
+    <div class="modal" style="max-width: 800px;">
+      <div class="modal-header">
+        <h2>📋 JSON Gerado</h2>
+        <button class="modal-close" onclick="closeJsonModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 16px; color: rgba(255,255,255,0.6); font-size: 14px;">
+          Copie o JSON abaixo e cole no arquivo <code style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">novidades.json</code> no seu repositório GitHub.
+        </p>
+        <div class="json-output" id="jsonOutput"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeJsonModal()">Fechar</button>
+        <button class="btn btn-success" onclick="copyJson()">📋 Copiar JSON</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal Preview -->
+  <div class="modal-overlay" id="previewModal">
+    <div class="modal" style="max-width: 1300px; max-height: 95vh;">
+      <div class="modal-header">
+        <h2>👁️ Preview do Modal</h2>
+        <button class="modal-close" onclick="closePreviewModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 0;">
+        <div id="previewContainer"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Copy Feedback -->
+  <div class="copy-feedback" id="copyFeedback">✓ JSON copiado com sucesso!</div>
+  
+  <script>
+    // Dados
+    let steps = [];
+    let howtoSteps = [];
+    
+    // Inicializar com dados existentes
+    function initializeData() {
+      steps = [
+        {
+          tag: "NOVO",
+          tagColor: "#22c55e",
+          title: "Pagamento em 2 cartões",
+          description: "Agora seus clientes podem dividir a compra em dois cartões de crédito, escolhendo o valor e as parcelas de cada um. Menos compras recusadas por limite e mais conversão no seu checkout.",
+          image: "https://raw.githubusercontent.com/lucashduarte-creator/-funil-kyc/refs/heads/main/6-pagamento-2-cartoes.png",
+          howTo: [
+            "Acesse as configurações do produto",
+            "Vá em \"Cobrança\" e edite ou crie um preço",
+            "Em \"Métodos de pagamento\", adicione \"2 Cartões\""
+          ]
+        },
+        {
+          tag: "NOVO",
+          tagColor: "#22c55e",
+          title: "Alterar data de vencimento de um boleto",
+          description: "Agora você mesmo altera a data de vencimento dos boletos dos seus alunos. É mais agilidade e menos cobranças em atraso.",
+          image: "https://raw.githubusercontent.com/lucashduarte-creator/-funil-kyc/refs/heads/main/7-Vencimento-do-Boleto.png",
+          howTo: [
+            "Solicite acesso ao Portal do Seller pelo nosso WhatsApp",
+            "No menu do painel, acesse \"Portal do Seller\"",
+            "Nas cobranças do aluno, clique em \"Alterar vencimento\""
+          ]
+        },
+        {
+          tag: "NOVO",
+          tagColor: "#22c55e",
+          title: "Parcelamento em até 18x",
+          description: "Agora você pode oferecer parcelamento estendido em até 18 vezes para seus clientes, aumentando o poder de compra e suas conversões.",
+          image: "https://raw.githubusercontent.com/lucashduarte-creator/-funil-kyc/refs/heads/main/parcelamento-18x.png",
+          howTo: [
+            "Acesse as configurações do produto",
+            "Vá em \"Opções de Pagamento\"",
+            "Ative \"Parcelamento Estendido\" e escolha até 18x"
+          ]
+        },
+        {
+          tag: "NOVO",
+          tagColor: "#22c55e",
+          title: "Pix na Assinatura",
+          description: "Seus clientes agora podem pagar assinaturas recorrentes via Pix, com cobrança automática e maior comodidade.",
+          image: "https://raw.githubusercontent.com/lucashduarte-creator/-funil-kyc/refs/heads/main/1-pix-na-assinatura.png",
+          howTo: [
+            "Acesse o produto de assinatura",
+            "Vá em \"Meios de Pagamento\"",
+            "Ative a opção \"Pix Recorrente\""
+          ]
+        },
+        {
+          tag: "NOVO",
+          tagColor: "#22c55e",
+          title: "Taxa de Adesão na Assinatura",
+          description: "Configure uma taxa de adesão para suas assinaturas. Um pagamento inicial, como taxa de matrícula, e após o período configurado (ex: 30 dias) inicia a cobrança recorrente.",
+          image: "https://raw.githubusercontent.com/lucashduarte-creator/-funil-kyc/refs/heads/main/adesao-na-assinatura.png",
+          howTo: [
+            "Acesse as configurações da assinatura",
+            "Vá em \"Valores e Taxas\"",
+            "Configure o valor da \"Taxa de Adesão\""
+          ]
+        },
+        {
+          tag: "NOVO",
+          tagColor: "#22c55e",
+          title: "Produto Híbrido",
+          description: "Agora você pode oferecer cobranças por pagamento único e assinatura em um mesmo produto. Simplificando a gestão dos seus produtos.",
+          image: "https://raw.githubusercontent.com/lucashduarte-creator/-funil-kyc/refs/heads/main/produto-hibrido.png",
+          howTo: [
+            "Crie ou edite um produto",
+            "Selecione o tipo \"Híbrido\"",
+            "Configure o valor único e o valor recorrente"
+          ]
+        },
+        {
+          tag: "NOVO",
+          tagColor: "#22c55e",
+          title: "Minhas Compras para Alunos",
+          description: "Seus alunos agora têm acesso a uma área dedicada para visualizar todas as compras, assinaturas ativas e histórico de pagamentos.",
+          image: "https://raw.githubusercontent.com/lucashduarte-creator/-funil-kyc/refs/heads/main/4-minhas-compras.png",
+          howTo: [
+            "Recurso ativado automaticamente",
+            "Alunos acessam via menu do perfil",
+            "Visualizam compras, assinaturas e faturas"
+          ]
+        }
+      ];
+      renderSteps();
+    }
+    
+    // Renderizar lista de steps
+    function renderSteps() {
+      const container = document.getElementById('stepsList');
+      const countEl = document.getElementById('stepsCount');
+      
+      countEl.textContent = steps.length;
+      
+      if (steps.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>Nenhum step adicionado ainda.</p>
+            <button class="btn btn-primary" onclick="openStepModal()">+ Adicionar primeiro step</button>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = steps.map((step, index) => `
+        <div class="step-item" draggable="true" data-index="${index}" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event)" ondragend="dragEnd(event)">
+          <span class="step-drag">⋮⋮</span>
+          <span class="step-number">${index + 1}</span>
+          <div class="step-info">
+            <div class="step-title">${step.title}</div>
+            <span class="step-tag" style="background: ${step.tagColor}">${step.tag}</span>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-secondary" onclick="editStep(${index})">Editar</button>
+            <button class="btn btn-danger" onclick="removeStep(${index})">Remover</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Drag and Drop
+    let draggedItem = null;
+    
+    function dragStart(e) {
+      draggedItem = e.target;
+      e.target.classList.add('dragging');
+    }
+    
+    function dragOver(e) {
+      e.preventDefault();
+    }
+    
+    function drop(e) {
+      e.preventDefault();
+      const target = e.target.closest('.step-item');
+      if (target && draggedItem !== target) {
+        const fromIndex = parseInt(draggedItem.dataset.index);
+        const toIndex = parseInt(target.dataset.index);
+        
+        const item = steps.splice(fromIndex, 1)[0];
+        steps.splice(toIndex, 0, item);
+        renderSteps();
+      }
+    }
+    
+    function dragEnd(e) {
+      e.target.classList.remove('dragging');
+      draggedItem = null;
+    }
+    
+    // Modal Step
+    function openStepModal(index = -1) {
+      document.getElementById('editingStepIndex').value = index;
+      document.getElementById('stepModalTitle').textContent = index === -1 ? 'Adicionar Step' : 'Editar Step';
+      
+      if (index === -1) {
+        document.getElementById('stepTag').value = 'NOVO';
+        document.getElementById('stepTagColor').value = '#22c55e';
+        document.getElementById('stepTitle').value = '';
+        document.getElementById('stepDescription').value = '';
+        document.getElementById('stepImage').value = '';
+        howtoSteps = ['', '', ''];
+      } else {
+        const step = steps[index];
+        document.getElementById('stepTag').value = step.tag;
+        document.getElementById('stepTagColor').value = step.tagColor;
+        document.getElementById('stepTitle').value = step.title;
+        document.getElementById('stepDescription').value = step.description;
+        document.getElementById('stepImage').value = step.image;
+        howtoSteps = [...step.howTo];
+      }
+      
+      renderHowtoSteps();
+      document.getElementById('stepModal').classList.add('active');
+    }
+    
+    function closeStepModal() {
+      document.getElementById('stepModal').classList.remove('active');
+    }
+    
+    function renderHowtoSteps() {
+      const container = document.getElementById('howtoList');
+      container.innerHTML = howtoSteps.map((step, index) => `
+        <div class="howto-item">
+          <span>${index + 1}</span>
+          <input type="text" value="${step}" onchange="updateHowtoStep(${index}, this.value)" placeholder="Descreva o passo...">
+          <button class="btn btn-danger" onclick="removeHowtoStep(${index})">×</button>
+        </div>
+      `).join('');
+    }
+    
+    function addHowtoStep() {
+      howtoSteps.push('');
+      renderHowtoSteps();
+    }
+    
+    function updateHowtoStep(index, value) {
+      howtoSteps[index] = value;
+    }
+    
+    function removeHowtoStep(index) {
+      if (howtoSteps.length > 1) {
+        howtoSteps.splice(index, 1);
+        renderHowtoSteps();
+      }
+    }
+    
+    function saveStep() {
+      const index = parseInt(document.getElementById('editingStepIndex').value);
+      const step = {
+        tag: document.getElementById('stepTag').value,
+        tagColor: document.getElementById('stepTagColor').value,
+        title: document.getElementById('stepTitle').value,
+        description: document.getElementById('stepDescription').value,
+        image: document.getElementById('stepImage').value,
+        howTo: howtoSteps.filter(s => s.trim() !== '')
+      };
+      
+      if (!step.title) {
+        alert('Por favor, preencha o título.');
+        return;
+      }
+      
+      if (index === -1) {
+        steps.push(step);
+      } else {
+        steps[index] = step;
+      }
+      
+      renderSteps();
+      closeStepModal();
+    }
+    
+    function editStep(index) {
+      openStepModal(index);
+    }
+    
+    function removeStep(index) {
+      if (confirm('Tem certeza que deseja remover este step?')) {
+        steps.splice(index, 1);
+        renderSteps();
+      }
+    }
+    
+    // JSON Modal
+    function openJsonModal() {
+      const data = {
+        modalId: document.getElementById('modalId').value,
+        ativo: document.getElementById('modalAtivo').checked,
+        steps: steps
+      };
+      
+      document.getElementById('jsonOutput').textContent = JSON.stringify(data, null, 2);
+      document.getElementById('jsonModal').classList.add('active');
+    }
+    
+    function closeJsonModal() {
+      document.getElementById('jsonModal').classList.remove('active');
+    }
+    
+    function copyJson() {
+      const json = document.getElementById('jsonOutput').textContent;
+      navigator.clipboard.writeText(json).then(() => {
+        const feedback = document.getElementById('copyFeedback');
+        feedback.classList.add('show');
+        setTimeout(() => feedback.classList.remove('show'), 2000);
+      });
+    }
+    
+    // Preview Modal
+    function openPreview() {
+      if (steps.length === 0) {
+        alert('Adicione pelo menos um step para visualizar o preview.');
+        return;
+      }
+      
+      const container = document.getElementById('previewContainer');
+      let currentStep = 0;
+      
+      function renderPreview() {
+        const step = steps[currentStep];
+        const stepsHtml = step.howTo.map((s, i) => `
+          <li style="display:flex;align-items:flex-start;gap:10px;color:rgba(255,255,255,0.9);font-size:14px;margin-bottom:8px;line-height:1.5;">
+            <span style="background:#a78bfa;color:#1a1a2e;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">${i + 1}</span>
+            <span>${s}</span>
+          </li>
+        `).join('');
+        
+        container.innerHTML = `
+          <div style="background:#1a1a2e;border-radius:16px;overflow:hidden;">
+            <div style="display:flex;flex-direction:row;">
+              <div style="flex:2;background:#252542;display:flex;align-items:center;justify-content:center;padding:10px;min-height:400px;overflow:hidden;">
+                <img src="${step.image}" alt="${step.title}" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;transform:scale(1.02);">
+              </div>
+              <div style="flex:1;padding:40px 30px 30px;display:flex;flex-direction:column;">
+                <span style="display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;color:#fff;margin-bottom:16px;align-self:flex-start;background:${step.tagColor}">${step.tag}</span>
+                <h2 style="font-size:24px;font-weight:700;color:#fff;margin:0 0 12px 0;line-height:1.3;">${step.title}</h2>
+                <p style="font-size:15px;color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:24px;">${step.description}</p>
+                <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:20px;margin-bottom:24px;">
+                  <div style="font-size:14px;font-weight:600;color:#a78bfa;margin-bottom:12px;">Como ativar:</div>
+                  <ul style="list-style:none;padding:0;margin:0;">
+                    ${stepsHtml}
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 30px;border-top:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.2);">
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <span style="font-size:14px;color:rgba(255,255,255,0.6);">${currentStep + 1} de ${steps.length}</span>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                  <input type="checkbox" style="width:16px;height:16px;cursor:pointer;accent-color:#a78bfa;">
+                  <span style="font-size:13px;color:rgba(255,255,255,0.6);">Não mostrar novamente</span>
+                </label>
+              </div>
+              <div style="display:flex;gap:12px;">
+                <button onclick="prevPreview()" style="padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;${currentStep === 0 ? 'opacity:0.3;cursor:not-allowed;' : ''}" ${currentStep === 0 ? 'disabled' : ''}>Anterior</button>
+                <button onclick="nextPreview()" style="padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#a78bfa 0%,#8b5cf6 100%);border:none;color:#fff;">${currentStep === steps.length - 1 ? 'Fechar' : 'Próximo'}</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      
+      window.prevPreview = function() {
+        if (currentStep > 0) {
+          currentStep--;
+          renderPreview();
+        }
+      };
+      
+      window.nextPreview = function() {
+        if (currentStep < steps.length - 1) {
+          currentStep++;
+          renderPreview();
+        } else {
+          closePreviewModal();
+        }
+      };
+      
+      renderPreview();
+      document.getElementById('previewModal').classList.add('active');
+    }
+    
+    function closePreviewModal() {
+      document.getElementById('previewModal').classList.remove('active');
+    }
+    
+    // Inicializar
+    initializeData();
+  </script>
+</body>
+</html>
