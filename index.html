@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Voomp - Gerenciador de Novidades</title>
+  <title>Voomp Backoffice</title>
   <style>
     * {
       margin: 0;
@@ -16,36 +16,168 @@
       background: #0f0f1a;
       color: #fff;
       min-height: 100vh;
-      padding: 20px;
     }
     
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    
-    /* Header */
-    .header {
+    /* Layout Principal */
+    .app-layout {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 30px;
+      min-height: 100vh;
     }
     
-    .header h1 {
-      font-size: 24px;
-      font-weight: 700;
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: #1a1a2e;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 100;
+    }
+    
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .sidebar-logo {
       display: flex;
       align-items: center;
       gap: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
     }
     
-    .header h1 span {
-      font-size: 28px;
+    .sidebar-logo span {
+      font-size: 24px;
     }
     
+    .sidebar-menu {
+      flex: 1;
+      padding: 16px 12px;
+      overflow-y: auto;
+    }
+    
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 4px;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    .menu-item:hover {
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+    }
+    
+    .menu-item.active {
+      background: rgba(167, 139, 250, 0.15);
+      color: #a78bfa;
+    }
+    
+    .menu-item-icon {
+      font-size: 18px;
+      width: 24px;
+      text-align: center;
+    }
+    
+    .sidebar-footer {
+      padding: 16px 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .menu-item-logout {
+      color: rgba(239, 68, 68, 0.8);
+    }
+    
+    .menu-item-logout:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+    
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 260px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    /* Top Header */
+    .top-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 30px;
+      background: #1a1a2e;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .btn-profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.8);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+    }
+    
+    .btn-profile:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+    
+    /* Page Content */
+    .page-content {
+      flex: 1;
+      padding: 30px;
+    }
+    
+    /* Feature Sections - Hidden by default */
+    .feature-section {
+      display: none;
+    }
+    
+    .feature-section.active {
+      display: block;
+    }
+    
+    /* Buttons */
     .btn {
       padding: 10px 20px;
       border-radius: 8px;
@@ -489,6 +621,7 @@
       opacity: 0;
       visibility: hidden;
       transition: all 0.3s;
+      z-index: 2000;
     }
     
     .copy-feedback.show {
@@ -496,23 +629,47 @@
       visibility: visible;
     }
     
-    /* Preview Modal */
-    .preview-container {
-      background: #252542;
-      border-radius: 12px;
-      padding: 20px;
+    /* Feature Header */
+    .feature-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    
+    .feature-header-actions {
+      display: flex;
+      gap: 10px;
     }
     
     /* Responsive */
+    @media (max-width: 900px) {
+      .sidebar {
+        width: 70px;
+      }
+      
+      .sidebar-logo span:last-child,
+      .menu-item span:not(.menu-item-icon) {
+        display: none;
+      }
+      
+      .main-content {
+        margin-left: 70px;
+      }
+      
+      .menu-item {
+        justify-content: center;
+        padding: 12px;
+      }
+      
+      .menu-item-icon {
+        margin: 0;
+      }
+    }
+    
     @media (max-width: 768px) {
       .form-row {
         flex-direction: column;
-      }
-      
-      .header {
-        flex-direction: column;
-        gap: 16px;
-        text-align: center;
       }
       
       .step-item {
@@ -524,53 +681,105 @@
         justify-content: flex-end;
         margin-top: 10px;
       }
+      
+      .feature-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <h1><span>🎉</span> Voomp - Gerenciador de Novidades</h1>
-      <div style="display: flex; gap: 10px;">
-        <button class="btn btn-secondary" onclick="openPreview()">👁️ Preview</button>
-        <button class="btn btn-primary" onclick="openJsonModal()">📋 Gerar JSON</button>
-      </div>
-    </div>
-    
-    <!-- Configurações Gerais -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">⚙️ Configurações Gerais</span>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Modal ID</label>
-          <input type="text" id="modalId" value="novidades-2025-v2" placeholder="novidades-2025-v2">
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <span>🛠️</span>
+          <span>Voomp Backoffice</span>
         </div>
-        <div class="form-group">
-          <label>&nbsp;</label>
-          <div class="checkbox-group">
-            <input type="checkbox" id="modalAtivo" checked>
-            <label for="modalAtivo">Modal Ativo</label>
+      </div>
+      
+      <nav class="sidebar-menu">
+        <button class="menu-item active" onclick="showFeature('modal-novidades')">
+          <span class="menu-item-icon">📢</span>
+          <span>Modal de Novidades</span>
+        </button>
+        <!-- Futuras features serão adicionadas aqui -->
+      </nav>
+      
+      <div class="sidebar-footer">
+        <button class="menu-item menu-item-logout" onclick="handleLogout()">
+          <span class="menu-item-icon">🚪</span>
+          <span>Sair</span>
+        </button>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Header -->
+      <header class="top-header">
+        <h1 class="page-title" id="pageTitle">Modal de Novidades</h1>
+        <div class="header-actions">
+          <button class="btn-profile" onclick="handleProfile()">
+            <span>👤</span>
+            <span>Perfil</span>
+          </button>
+        </div>
+      </header>
+      
+      <!-- Page Content -->
+      <div class="page-content">
+        <!-- Feature: Modal de Novidades -->
+        <section class="feature-section active" id="feature-modal-novidades">
+          <div class="feature-header">
+            <div></div>
+            <div class="feature-header-actions">
+              <button class="btn btn-secondary" onclick="openPreview()">👁️ Preview</button>
+              <button class="btn btn-primary" onclick="openJsonModal()">📋 Gerar JSON</button>
+            </div>
           </div>
-        </div>
+          
+          <!-- Configurações Gerais -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">⚙️ Configurações Gerais</span>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Modal ID</label>
+                <input type="text" id="modalId" value="novidades-2025-v2" placeholder="novidades-2025-v2">
+              </div>
+              <div class="form-group">
+                <label>&nbsp;</label>
+                <div class="checkbox-group">
+                  <input type="checkbox" id="modalAtivo" checked>
+                  <label for="modalAtivo">Modal Ativo</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Steps -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📝 Steps (<span id="stepsCount">0</span>)</span>
+              <button class="btn btn-primary" onclick="openStepModal()">+ Adicionar</button>
+            </div>
+            <div class="steps-list" id="stepsList">
+              <div class="empty-state">
+                <p>Nenhum step adicionado ainda.</p>
+                <button class="btn btn-primary" onclick="openStepModal()">+ Adicionar primeiro step</button>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Outras features serão adicionadas aqui -->
       </div>
-    </div>
-    
-    <!-- Steps -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">📝 Steps (<span id="stepsCount">0</span>)</span>
-        <button class="btn btn-primary" onclick="openStepModal()">+ Adicionar</button>
-      </div>
-      <div class="steps-list" id="stepsList">
-        <div class="empty-state">
-          <p>Nenhum step adicionado ainda.</p>
-          <button class="btn btn-primary" onclick="openStepModal()">+ Adicionar primeiro step</button>
-        </div>
-      </div>
-    </div>
+    </main>
   </div>
   
   <!-- Modal Editar/Adicionar Step -->
@@ -680,12 +889,46 @@
   </div>
   
   <script>
-    // Dados
+    // ==========================================
+    // NAVEGAÇÃO E FEATURES
+    // ==========================================
+    
+    function showFeature(featureId) {
+      // Atualizar menu ativo
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      event.currentTarget.classList.add('active');
+      
+      // Mostrar feature correspondente
+      document.querySelectorAll('.feature-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById('feature-' + featureId).classList.add('active');
+      
+      // Atualizar título da página
+      const titles = {
+        'modal-novidades': 'Modal de Novidades'
+      };
+      document.getElementById('pageTitle').textContent = titles[featureId] || featureId;
+    }
+    
+    function handleProfile() {
+      alert('Funcionalidade de Perfil será implementada em breve.');
+    }
+    
+    function handleLogout() {
+      alert('Funcionalidade de Logout será implementada quando houver autenticação.');
+    }
+    
+    // ==========================================
+    // MODAL DE NOVIDADES - DADOS
+    // ==========================================
+    
     let steps = [];
     let howtoSteps = [];
     let pendingVisibilityChange = { index: -1, newValue: false };
     
-    // Inicializar com dados existentes
     function initializeData() {
       steps = [
         {
@@ -783,7 +1026,10 @@
       renderSteps();
     }
     
-    // Renderizar lista de steps
+    // ==========================================
+    // MODAL DE NOVIDADES - RENDERIZAÇÃO
+    // ==========================================
+    
     function renderSteps() {
       const container = document.getElementById('stepsList');
       const countEl = document.getElementById('stepsCount');
@@ -820,7 +1066,10 @@
       `).join('');
     }
     
-    // Drag and Drop
+    // ==========================================
+    // DRAG AND DROP
+    // ==========================================
+    
     let draggedItem = null;
     
     function dragStart(e) {
@@ -850,7 +1099,10 @@
       draggedItem = null;
     }
     
-    // Modal Step
+    // ==========================================
+    // MODAL STEP (ADICIONAR/EDITAR)
+    // ==========================================
+    
     function openStepModal(index = -1) {
       document.getElementById('editingStepIndex').value = index;
       document.getElementById('stepModalTitle').textContent = index === -1 ? 'Adicionar Step' : 'Editar Step';
@@ -915,7 +1167,8 @@
         title: document.getElementById('stepTitle').value,
         description: document.getElementById('stepDescription').value,
         image: document.getElementById('stepImage').value,
-        howTo: howtoSteps.filter(s => s.trim() !== '')
+        howTo: howtoSteps.filter(s => s.trim() !== ''),
+        visible: true
       };
       
       if (!step.title) {
@@ -926,6 +1179,7 @@
       if (index === -1) {
         steps.push(step);
       } else {
+        step.visible = steps[index].visible;
         steps[index] = step;
       }
       
@@ -944,12 +1198,14 @@
       }
     }
     
-    // Visibility Toggle com Modal de Confirmação
+    // ==========================================
+    // VISIBILIDADE COM CONFIRMAÇÃO
+    // ==========================================
+    
     function requestVisibilityChange(index, newValue) {
       pendingVisibilityChange = { index, newValue };
       
       const step = steps[index];
-      const action = newValue ? 'exibir' : 'ocultar';
       const icon = newValue ? '👁️' : '🙈';
       
       document.getElementById('confirmIcon').textContent = icon;
@@ -965,7 +1221,6 @@
     
     function closeConfirmModal() {
       document.getElementById('confirmVisibilityModal').classList.remove('active');
-      // Reverter o checkbox para o estado anterior
       const checkbox = document.getElementById('visible-' + pendingVisibilityChange.index);
       if (checkbox) {
         checkbox.checked = !pendingVisibilityChange.newValue;
@@ -983,7 +1238,10 @@
       pendingVisibilityChange = { index: -1, newValue: false };
     }
     
-    // JSON Modal
+    // ==========================================
+    // JSON MODAL
+    // ==========================================
+    
     function openJsonModal() {
       const visibleSteps = steps.filter(s => s.visible !== false);
       
@@ -1010,7 +1268,10 @@
       });
     }
     
-    // Preview Modal
+    // ==========================================
+    // PREVIEW MODAL
+    // ==========================================
+    
     function openPreview() {
       const visibleSteps = steps.filter(s => s.visible !== false);
       
@@ -1090,7 +1351,10 @@
       document.getElementById('previewModal').classList.remove('active');
     }
     
-    // Inicializar
+    // ==========================================
+    // INICIALIZAÇÃO
+    // ==========================================
+    
     initializeData();
   </script>
 </body>
